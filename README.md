@@ -1,4 +1,4 @@
-# SyncStock - Sincroniza
+# SyncStock - Sincroniza Web
 
 ## Status do Projeto
 
