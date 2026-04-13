@@ -1,0 +1,97 @@
+<!doctype html>
+<html lang="pt-br">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>SyncStock - Fornecedores</title>
+    <link rel="stylesheet" href="/css/style.css" />
+  </head>
+  <body>
+    <div class="dashboard-container">
+      <aside class="sidebar">
+        <div class="sidebar-header">
+          <img
+            src="/images/logo-syncstock-sidebar.png"
+            alt="SyncStock Logo"
+            class="logo-sidebar"
+          />
+          <p>Gestão de Estoque</p>
+        </div>
+        <ul class="sidebar-menu">
+          <li><a href="/dashboard">📊 Dashboard</a></li>
+          <li><a href="/usuarios">👥 Usuários</a></li>
+          <li><a href="/unidades">🏢 Unidades</a></li>
+          <li><a href="/setores">📁 Setores</a></li>
+          <li><a href="/produtos">📦 Produtos</a></li>
+          <li class="active"><a href="/fornecedores">🚚 Fornecedores</a></li>
+          <li><a href="/pedidos">📋 Pedidos</a></li>
+          <li><a href="/estoque">📊 Estoque</a></li>
+          <li><a href="/relatorios">📈 Relatórios</a></li>
+        </ul>
+      </aside>
+      <main class="main-content">
+        <div class="top-bar">
+          <h3>Fornecedores</h3>
+          <div class="user-info">
+            <span>👤 Administrador</span
+            ><button class="logout-btn" onclick="logout()">Sair</button>
+          </div>
+        </div>
+        <div class="content-area">
+          <button
+            class="btn btn-primary"
+            style="width: auto; margin-bottom: 20px"
+            onclick="abrirModal()"
+          >
+            + Novo Fornecedor
+          </button>
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>Nome</th>
+                <th>CNPJ</th>
+                <th>Email</th>
+                <th>Telefone</th>
+                <th>Ações</th>
+              </tr>
+            </thead>
+            <tbody id="tabelaFornecedores">
+              <tr>
+                <td colspan="6" style="text-align: center">Carregando...</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </main>
+    </div>
+    <script src="/js/main.js"></script>
+    <script>
+      const fornecedores = [
+        {
+          id: 1,
+          nome: "Distribuidora ABC",
+          cnpj: "12.345.678/0001-90",
+          email: "contato@abc.com",
+          telefone: "(11) 5555-1234",
+        },
+      ];
+      function carregarTabela() {
+        const tbody = document.getElementById("tabelaFornecedores");
+        tbody.innerHTML = "";
+        fornecedores.forEach((f) => {
+          const row = tbody.insertRow();
+          row.innerHTML = `<td>${f.id}</td><td>${f.nome}</td><td>${f.cnpj}</td><td>${f.email}</td><td>${f.telefone}</td>
+                    <td><button class="btn btn-small btn-edit">Editar</button><button class="btn btn-small btn-delete">Excluir</button></td>`;
+        });
+      }
+      function abrirModal() {
+        alert("Funcionalidade de cadastro será implementada em breve!");
+      }
+      function logout() {
+        window.location.href = "/login";
+      }
+      carregarTabela();
+    </script>
+  </body>
+</html>

@@ -1,0 +1,118 @@
+<!doctype html>
+<html lang="pt-br">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>SyncStock - Estoque</title>
+    <link rel="stylesheet" href="/css/style.css" />
+  </head>
+  <body>
+    <div class="dashboard-container">
+      <aside class="sidebar">
+        <div class="sidebar-header">
+          <img
+            src="/images/logo-syncstock-sidebar.png"
+            alt="SyncStock Logo"
+            class="logo-sidebar"
+          />
+          <p>Gestão de Estoque</p>
+        </div>
+        <ul class="sidebar-menu">
+          <li><a href="/dashboard">📊 Dashboard</a></li>
+          <li><a href="/usuarios">👥 Usuários</a></li>
+          <li><a href="/unidades">🏢 Unidades</a></li>
+          <li><a href="/setores">📁 Setores</a></li>
+          <li><a href="/produtos">📦 Produtos</a></li>
+          <li><a href="/fornecedores">🚚 Fornecedores</a></li>
+          <li><a href="/pedidos">📋 Pedidos</a></li>
+          <li class="active"><a href="/estoque">📊 Estoque</a></li>
+          <li><a href="/relatorios">📈 Relatórios</a></li>
+        </ul>
+      </aside>
+      <main class="main-content">
+        <div class="top-bar">
+          <h3>Movimentações de Estoque</h3>
+          <div class="user-info">
+            <span>👤 Administrador</span
+            ><button class="logout-btn" onclick="logout()">Sair</button>
+          </div>
+        </div>
+        <div class="content-area">
+          <button
+            class="btn btn-primary"
+            style="width: auto; margin-bottom: 20px"
+            onclick="abrirModalEntrada()"
+          >
+            + Entrada
+          </button>
+          <button
+            class="btn btn-primary"
+            style="width: auto; margin-bottom: 20px; background: #e53e3e"
+            onclick="abrirModalSaida()"
+          >
+            - Saída
+          </button>
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>Produto</th>
+                <th>Unidade</th>
+                <th>Tipo</th>
+                <th>Quantidade</th>
+                <th>Data</th>
+                <th>Responsável</th>
+              </tr>
+            </thead>
+            <tbody id="tabelaMovimentacoes">
+              <tr>
+                <td colspan="7" style="text-align: center">Carregando...</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </main>
+    </div>
+    <script src="/js/main.js"></script>
+    <script>
+      const movimentacoes = [
+        {
+          id: 1,
+          produto: "Detergente",
+          unidade: "Guarani",
+          tipo: "Entrada",
+          quantidade: 50,
+          data: "13/04/2026",
+          responsavel: "Admin",
+        },
+        {
+          id: 2,
+          produto: "Papel A4",
+          unidade: "Guarani",
+          tipo: "Saída",
+          quantidade: 10,
+          data: "12/04/2026",
+          responsavel: "Gerente",
+        },
+      ];
+      function carregarTabela() {
+        const tbody = document.getElementById("tabelaMovimentacoes");
+        tbody.innerHTML = "";
+        movimentacoes.forEach((m) => {
+          const row = tbody.insertRow();
+          row.innerHTML = `<td>${m.id}</td><td>${m.produto}</td><td>${m.unidade}</td><td style="color: ${m.tipo === "Entrada" ? "#48bb78" : "#e53e3e"}">${m.tipo}</td><td>${m.quantidade}</td><td>${m.data}</td><td>${m.responsavel}</td>`;
+        });
+      }
+      function abrirModalEntrada() {
+        alert("Registrar entrada de produto");
+      }
+      function abrirModalSaida() {
+        alert("Registrar saída de produto");
+      }
+      function logout() {
+        window.location.href = "/login";
+      }
+      carregarTabela();
+    </script>
+  </body>
+</html>

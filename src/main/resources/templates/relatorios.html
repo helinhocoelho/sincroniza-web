@@ -1,0 +1,105 @@
+<!doctype html>
+<html lang="pt-br">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>SyncStock - Relatórios</title>
+    <link rel="stylesheet" href="/css/style.css" />
+  </head>
+  <body>
+    <div class="dashboard-container">
+      <aside class="sidebar">
+        <div class="sidebar-header">
+          <img
+            src="/images/logo-syncstock-sidebar.png"
+            alt="SyncStock Logo"
+            class="logo-sidebar"
+          />
+          <p>Gestão de Estoque</p>
+        </div>
+        <ul class="sidebar-menu">
+          <li><a href="/dashboard">📊 Dashboard</a></li>
+          <li><a href="/usuarios">👥 Usuários</a></li>
+          <li><a href="/unidades">🏢 Unidades</a></li>
+          <li><a href="/setores">📁 Setores</a></li>
+          <li><a href="/produtos">📦 Produtos</a></li>
+          <li><a href="/fornecedores">🚚 Fornecedores</a></li>
+          <li><a href="/pedidos">📋 Pedidos</a></li>
+          <li><a href="/estoque">📊 Estoque</a></li>
+          <li class="active"><a href="/relatorios">📈 Relatórios</a></li>
+        </ul>
+      </aside>
+      <main class="main-content">
+        <div class="top-bar">
+          <h3>Relatórios</h3>
+          <div class="user-info">
+            <span>👤 Administrador</span
+            ><button class="logout-btn" onclick="logout()">Sair</button>
+          </div>
+        </div>
+        <div class="content-area">
+          <div class="stats-grid">
+            <div
+              class="stat-card"
+              onclick="gerarRelatorio('estoque')"
+              style="cursor: pointer"
+            >
+              <h3>📊 Relatório de Estoque</h3>
+              <div class="value">→</div>
+            </div>
+            <div
+              class="stat-card"
+              onclick="gerarRelatorio('pedidos')"
+              style="cursor: pointer"
+            >
+              <h3>📋 Relatório de Pedidos</h3>
+              <div class="value">→</div>
+            </div>
+            <div
+              class="stat-card"
+              onclick="gerarRelatorio('movimentacoes')"
+              style="cursor: pointer"
+            >
+              <h3>🔄 Relatório de Movimentações</h3>
+              <div class="value">→</div>
+            </div>
+            <div
+              class="stat-card"
+              onclick="gerarRelatorio('minimo')"
+              style="cursor: pointer"
+            >
+              <h3>⚠️ Produtos com Estoque Mínimo</h3>
+              <div class="value">→</div>
+            </div>
+          </div>
+          <div
+            id="relatorioContainer"
+            class="form-card"
+            style="margin-top: 20px"
+          >
+            <h3>Selecione um relatório para visualizar</h3>
+          </div>
+        </div>
+      </main>
+    </div>
+    <script src="/js/main.js"></script>
+    <script>
+      function gerarRelatorio(tipo) {
+        const container = document.getElementById("relatorioContainer");
+        if (tipo === "estoque") {
+          container.innerHTML =
+            '<h3>Relatório de Estoque</h3><table class="data-table"><thead><tr><th>Produto</th><th>Unidade</th><th>Quantidade</th></tr></thead><tbody><tr><td>Detergente</td><td>Guarani</td><td>45</td></tr><tr><td>Papel A4</td><td>Guarani</td><td>90</td></tr></tbody></table>';
+        } else if (tipo === "pedidos") {
+          container.innerHTML =
+            '<h3>Relatório de Pedidos</h3><table class="data-table"><thead><tr><th>ID</th><th>Unidade</th><th>Status</th></tr></thead><tbody><tr><td>1</td><td>Guarani</td><td>Pendente</td></tr></tbody></table>';
+        } else {
+          container.innerHTML =
+            "<h3>Relatório Gerado</h3><p>Funcionalidade em desenvolvimento</p>";
+        }
+      }
+      function logout() {
+        window.location.href = "/login";
+      }
+    </script>
+  </body>
+</html>

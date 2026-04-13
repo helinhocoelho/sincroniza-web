@@ -1,0 +1,104 @@
+<!doctype html>
+<html lang="pt-br">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>SyncStock - Pedidos</title>
+    <link rel="stylesheet" href="/css/style.css" />
+  </head>
+  <body>
+    <div class="dashboard-container">
+      <aside class="sidebar">
+        <div class="sidebar-header">
+          <img
+            src="/images/logo-syncstock-sidebar.png"
+            alt="SyncStock Logo"
+            class="logo-sidebar"
+          />
+          <p>Gestão de Estoque</p>
+        </div>
+        <ul class="sidebar-menu">
+          <li><a href="/dashboard">📊 Dashboard</a></li>
+          <li><a href="/usuarios">👥 Usuários</a></li>
+          <li><a href="/unidades">🏢 Unidades</a></li>
+          <li><a href="/setores">📁 Setores</a></li>
+          <li><a href="/produtos">📦 Produtos</a></li>
+          <li><a href="/fornecedores">🚚 Fornecedores</a></li>
+          <li class="active"><a href="/pedidos">📋 Pedidos</a></li>
+          <li><a href="/estoque">📊 Estoque</a></li>
+          <li><a href="/relatorios">📈 Relatórios</a></li>
+        </ul>
+      </aside>
+      <main class="main-content">
+        <div class="top-bar">
+          <h3>Pedidos</h3>
+          <div class="user-info">
+            <span>👤 Administrador</span
+            ><button class="logout-btn" onclick="logout()">Sair</button>
+          </div>
+        </div>
+        <div class="content-area">
+          <button
+            class="btn btn-primary"
+            style="width: auto; margin-bottom: 20px"
+            onclick="abrirModal()"
+          >
+            + Novo Pedido
+          </button>
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>Unidade</th>
+                <th>Setor</th>
+                <th>Data</th>
+                <th>Status</th>
+                <th>Ações</th>
+              </tr>
+            </thead>
+            <tbody id="tabelaPedidos">
+              <tr>
+                <td colspan="6" style="text-align: center">Carregando...</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </main>
+    </div>
+    <script src="/js/main.js"></script>
+    <script>
+      const pedidos = [
+        {
+          id: 1,
+          unidade: "Guarani",
+          setor: "Limpeza",
+          data: "13/04/2026",
+          status: "Pendente",
+        },
+        {
+          id: 2,
+          unidade: "Jaraguá",
+          setor: "Manutenção",
+          data: "12/04/2026",
+          status: "Aprovado",
+        },
+      ];
+      function carregarTabela() {
+        const tbody = document.getElementById("tabelaPedidos");
+        tbody.innerHTML = "";
+        pedidos.forEach((p) => {
+          const row = tbody.insertRow();
+          row.innerHTML = `<td>${p.id}</td><td>${p.unidade}</td><td>${p.setor}</td><td>${p.data}</td><td>${p.status}</td>
+                    <td><button class="btn btn-small btn-edit">Aprovar</button><button class="btn btn-small btn-delete">Cancelar</button></td>`;
+        });
+      }
+      function abrirModal() {
+        alert("Funcionalidade de cadastro será implementada em breve!");
+      }
+      function logout() {
+        window.location.href = "/login";
+      }
+      carregarTabela();
+    </script>
+  </body>
+</html>

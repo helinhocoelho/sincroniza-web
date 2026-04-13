@@ -1,0 +1,144 @@
+<!doctype html>
+<html lang="pt-br">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>SyncStock - Dashboard</title>
+    <link rel="stylesheet" href="/css/style.css" />
+  </head>
+  <body>
+    <div class="dashboard-container">
+      <!-- Sidebar -->
+      <aside class="sidebar">
+        <div class="sidebar-header">
+          <img
+            src="/images/logo-syncstock-sidebar.png"
+            alt="SyncStock Logo"
+            class="logo-sidebar"
+          />
+          <p>Gestão de Estoque</p>
+        </div>
+        <ul class="sidebar-menu">
+          <li class="active"><a href="/dashboard">📊 Dashboard</a></li>
+          <li><a href="/usuarios">👥 Usuários</a></li>
+          <li><a href="/unidades">🏢 Unidades</a></li>
+          <li><a href="/setores">📁 Setores</a></li>
+          <li><a href="/produtos">📦 Produtos</a></li>
+          <li><a href="/fornecedores">🚚 Fornecedores</a></li>
+          <li><a href="/pedidos">📋 Pedidos</a></li>
+          <li><a href="/estoque">📊 Estoque</a></li>
+          <li><a href="/relatorios">📈 Relatórios</a></li>
+        </ul>
+      </aside>
+
+      <!-- Main Content -->
+      <main class="main-content">
+        <div class="top-bar">
+          <h3>Dashboard</h3>
+          <div class="user-info">
+            <span>👤 Administrador</span>
+            <button class="logout-btn" onclick="logout()">Sair</button>
+          </div>
+        </div>
+
+        <div class="content-area">
+          <div class="stats-grid">
+            <div class="stat-card">
+              <h3>Total de Produtos</h3>
+              <div class="value" id="totalProdutos">0</div>
+            </div>
+            <div class="stat-card">
+              <h3>Pedidos Pendentes</h3>
+              <div class="value" id="pedidosPendentes">0</div>
+            </div>
+            <div class="stat-card">
+              <h3>Estoque Baixo</h3>
+              <div class="value" id="estoqueBaixo">0</div>
+            </div>
+            <div class="stat-card">
+              <h3>Unidades</h3>
+              <div class="value" id="totalUnidades">0</div>
+            </div>
+          </div>
+
+          <h3 style="margin: 20px 0 10px 0">Últimos Pedidos</h3>
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>Unidade</th>
+                <th>Setor</th>
+                <th>Data</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+            <tbody id="tabelaPedidos">
+              <tr>
+                <td colspan="5" style="text-align: center">Carregando...</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </main>
+    </div>
+
+    <script src="/js/main.js"></script>
+    <script>
+      const dadosSimulados = {
+        totalProdutos: 156,
+        pedidosPendentes: 8,
+        estoqueBaixo: 5,
+        totalUnidades: 3,
+        ultimosPedidos: [
+          {
+            id: 1,
+            unidade: "Guarani",
+            setor: "Limpeza",
+            data: "13/04/2026",
+            status: "Pendente",
+          },
+          {
+            id: 2,
+            unidade: "Jaraguá",
+            setor: "Manutenção",
+            data: "12/04/2026",
+            status: "Aprovado",
+          },
+          {
+            id: 3,
+            unidade: "Centro",
+            setor: "Secretaria",
+            data: "11/04/2026",
+            status: "Enviado",
+          },
+        ],
+      };
+
+      document.getElementById("totalProdutos").textContent =
+        dadosSimulados.totalProdutos;
+      document.getElementById("pedidosPendentes").textContent =
+        dadosSimulados.pedidosPendentes;
+      document.getElementById("estoqueBaixo").textContent =
+        dadosSimulados.estoqueBaixo;
+      document.getElementById("totalUnidades").textContent =
+        dadosSimulados.totalUnidades;
+
+      const tabelaBody = document.getElementById("tabelaPedidos");
+      tabelaBody.innerHTML = "";
+      dadosSimulados.ultimosPedidos.forEach((pedido) => {
+        const row = tabelaBody.insertRow();
+        row.innerHTML = `
+                <td>${pedido.id}</td>
+                <td>${pedido.unidade}</td>
+                <td>${pedido.setor}</td>
+                <td>${pedido.data}</td>
+                <td><span style="color: ${pedido.status === "Pendente" ? "#e53e3e" : "#48bb78"}">${pedido.status}</span></td>
+            `;
+      });
+
+      function logout() {
+        window.location.href = "/login";
+      }
+    </script>
+  </body>
+</html>

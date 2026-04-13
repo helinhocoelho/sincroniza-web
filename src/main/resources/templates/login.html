@@ -1,0 +1,75 @@
+<!doctype html>
+<html lang="pt-br">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>SyncStock - Login</title>
+    <link rel="stylesheet" href="/css/style.css" />
+  </head>
+  <body>
+    <div class="login-container">
+      <div class="login-card">
+        <div class="logo-container">
+          <img
+            src="/images/logo-syncstock-login.png"
+            alt="SyncStock Logo"
+            class="logo-login"
+          />
+        </div>
+        <h2>Sistema de Gestão de Estoque</h2>
+
+        <form id="loginForm">
+          <div class="form-group">
+            <label for="login">Login</label>
+            <input
+              type="text"
+              id="login"
+              name="login"
+              placeholder="Digite seu login"
+              required
+            />
+          </div>
+
+          <div class="form-group">
+            <label for="senha">Senha</label>
+            <input
+              type="password"
+              id="senha"
+              name="senha"
+              placeholder="Digite sua senha"
+              required
+            />
+          </div>
+
+          <button type="submit" class="btn">Entrar</button>
+
+          <div id="loginError" class="error-message"></div>
+        </form>
+      </div>
+    </div>
+
+    <script src="/js/main.js"></script>
+    <script>
+      document
+        .getElementById("loginForm")
+        .addEventListener("submit", function (e) {
+          e.preventDefault();
+
+          const login = document.getElementById("login").value;
+          const senha = document.getElementById("senha").value;
+
+          const validacaoLogin = validarLogin(login);
+          if (!validacaoLogin.valido) {
+            mostrarErro("loginError", validacaoLogin.mensagem);
+            return;
+          }
+
+          if (login === "admin" && senha === "123456") {
+            window.location.href = "/dashboard";
+          } else {
+            mostrarErro("loginError", "Login ou senha inválidos!");
+          }
+        });
+    </script>
+  </body>
+</html>
