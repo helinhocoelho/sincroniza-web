@@ -15,18 +15,16 @@ public class UsuarioService {
     
     // Criar usuário com validações (RF001)
     public Usuario criarUsuario(Usuario usuario) {
-        // Validar unicidade do login
+        // Validar login único
         if (usuarioRepository.existsByLogin(usuario.getLogin())) {
             throw new RuntimeException("Login já existe!");
         }
         
-        // Validar unicidade do email
+        // Validar email único
         if (usuarioRepository.existsByEmail(usuario.getEmail())) {
             throw new RuntimeException("Email já cadastrado!");
         }
-        
-        // Validar força da senha (será implementado depois com PasswordHasher)
-        
+              
         return usuarioRepository.save(usuario);
     }
     

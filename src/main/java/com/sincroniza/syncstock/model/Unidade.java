@@ -23,16 +23,13 @@ public class Unidade {
     
     private String telefone;
     
-    // Construtor padrão
     public Unidade() {}
     
-    // Construtor com ID e nome (útil para referências)
     public Unidade(Long id, String nome) {
         this.id = id;
         this.nome = nome;
     }
     
-    // Construtor completo
     public Unidade(String nome, String email, String endereco, String telefone) {
         this.nome = nome;
         this.email = email;

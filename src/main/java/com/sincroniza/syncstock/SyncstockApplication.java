@@ -16,7 +16,7 @@ public class SyncstockApplication {
         // === TESTES MANUAIS ===
         UsuarioService usuarioService = context.getBean(UsuarioService.class);
         
-        System.out.println("\n=== INICIANDO TESTES DO SYNCSOCKET WEB ===\n");
+        System.out.println("\n=== INICIANDO TESTES DO SINCRONIZA WEB ===\n");
         
         // Teste 1: Criar usuário
         try {
@@ -24,9 +24,9 @@ public class SyncstockApplication {
             novoUsuario.setNome("Administrador Sistema");
             novoUsuario.setLogin("admin");
             novoUsuario.setEmail("admin@sincroniza.com");
-            novoUsuario.setSenhaHash("$2a$10$hashdosenha"); // temporário
+            novoUsuario.setSenhaHash("$2a$10$hashdasenha");
             novoUsuario.setPermissao(Permissao.ADMINISTRADOR);
-            novoUsuario.setUnidade(null); // será associado depois
+            novoUsuario.setUnidade(null);
             novoUsuario.setSetor(null);
             
             Usuario salvo = usuarioService.criarUsuario(novoUsuario);

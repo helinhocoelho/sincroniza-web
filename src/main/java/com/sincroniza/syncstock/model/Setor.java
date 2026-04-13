@@ -21,16 +21,13 @@ public class Setor {
     @JsonIgnoreProperties("setores")
     private Unidade unidade;
     
-    // Construtor padrão
     public Setor() {}
     
-    // Construtor com nome e unidade
     public Setor(String nome, Unidade unidade) {
         this.nome = nome;
         this.unidade = unidade;
     }
     
-    // Construtor com ID (para referência)
     public Setor(Long id) {
         this.id = id;
     }

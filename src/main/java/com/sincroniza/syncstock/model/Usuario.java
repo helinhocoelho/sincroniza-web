@@ -43,10 +43,8 @@ public class Usuario {
     @JoinColumn(name = "setor_id")
     private Setor setor;
     
-    // Construtor padrão
     public Usuario() {}
     
-    // Construtor sem ID
     public Usuario(String nome, String login, String email, String senhaHash, 
                    Permissao permissao, Unidade unidade, Setor setor) {
         this.nome = nome;
