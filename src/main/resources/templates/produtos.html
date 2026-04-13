@@ -4,6 +4,11 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>SyncStock - Produtos</title>
+    <link rel="icon" href="/favicon.ico" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
+    />
     <link rel="stylesheet" href="/css/style.css" />
   </head>
   <body>
@@ -18,23 +23,45 @@
           <p>Gestão de Estoque</p>
         </div>
         <ul class="sidebar-menu">
-          <li><a href="/dashboard">📊 Dashboard</a></li>
-          <li><a href="/usuarios">👥 Usuários</a></li>
-          <li><a href="/unidades">🏢 Unidades</a></li>
-          <li><a href="/setores">📁 Setores</a></li>
-          <li class="active"><a href="/produtos">📦 Produtos</a></li>
-          <li><a href="/fornecedores">🚚 Fornecedores</a></li>
-          <li><a href="/pedidos">📋 Pedidos</a></li>
-          <li><a href="/estoque">📊 Estoque</a></li>
-          <li><a href="/relatorios">📈 Relatórios</a></li>
+          <li>
+            <a href="/dashboard"><i class="fas fa-chart-line"></i> Dashboard</a>
+          </li>
+          <li>
+            <a href="/usuarios"><i class="fas fa-users"></i> Usuários</a>
+          </li>
+          <li>
+            <a href="/unidades"><i class="fas fa-building"></i> Unidades</a>
+          </li>
+          <li>
+            <a href="/setores"><i class="fas fa-folder"></i> Setores</a>
+          </li>
+          <li>
+            <a href="/produtos"><i class="fas fa-box"></i> Produtos</a>
+          </li>
+          <li>
+            <a href="/fornecedores"
+              ><i class="fas fa-truck"></i> Fornecedores</a
+            >
+          </li>
+          <li>
+            <a href="/pedidos"><i class="fas fa-clipboard-list"></i> Pedidos</a>
+          </li>
+          <li>
+            <a href="/estoque"><i class="fas fa-warehouse"></i> Estoque</a>
+          </li>
+          <li>
+            <a href="/relatorios"
+              ><i class="fas fa-chart-bar"></i> Relatórios</a
+            >
+          </li>
         </ul>
       </aside>
       <main class="main-content">
         <div class="top-bar">
           <h3>Produtos</h3>
           <div class="user-info">
-            <span>👤 Administrador</span
-            ><button class="logout-btn" onclick="logout()">Sair</button>
+            <span>👤 Administrador</span>
+            <button class="logout-btn" onclick="logout()">Sair</button>
           </div>
         </div>
         <div class="content-area">
@@ -45,6 +72,7 @@
           >
             + Novo Produto
           </button>
+
           <table class="data-table">
             <thead>
               <tr>
@@ -52,53 +80,286 @@
                 <th>Nome</th>
                 <th>Categoria</th>
                 <th>Unidade</th>
+                <th>Fornecedor</th>
                 <th>Estoque Mínimo</th>
+                <th>Status</th>
                 <th>Ações</th>
               </tr>
             </thead>
             <tbody id="tabelaProdutos">
               <tr>
-                <td colspan="6" style="text-align: center">Carregando...</td>
+                <td colspan="8" style="text-align: center">Carregando...</td>
               </tr>
             </tbody>
           </table>
         </div>
       </main>
     </div>
+
+    <!-- Modal para cadastro/edição -->
+    <div id="modalProduto" class="modal">
+      <div class="modal-content">
+        <span class="close" onclick="fecharModal()">&times;</span>
+        <h3 id="modalTitulo">Novo Produto</h3>
+        <form id="produtoForm">
+          <input type="hidden" id="produtoId" />
+          <div class="form-group">
+            <label for="nome">Nome</label>
+            <input type="text" id="nome" required />
+          </div>
+          <div class="form-group">
+            <label for="descricao">Descrição</label>
+            <textarea id="descricao" rows="3"></textarea>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label for="categoriaId">Categoria</label>
+              <select id="categoriaId" required>
+                <option value="">Selecione...</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="medidaId">Unidade de Medida</label>
+              <select id="medidaId" required>
+                <option value="">Selecione...</option>
+              </select>
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label for="fornecedorId">Fornecedor</label>
+              <select id="fornecedorId">
+                <option value="">Selecione...</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="estoqueMinimo">Estoque Mínimo</label>
+              <input type="number" id="estoqueMinimo" step="0.01" value="0" />
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="ativo">Status</label>
+            <select id="ativo">
+              <option value="true">Ativo</option>
+              <option value="false">Inativo</option>
+            </select>
+          </div>
+          <button type="submit" class="btn">Salvar</button>
+        </form>
+      </div>
+    </div>
+
     <script src="/js/main.js"></script>
     <script>
-      const produtos = [
-        {
-          id: 1,
-          nome: "Detergente",
-          categoria: "Limpeza",
-          unidade: "Unidade",
-          estoqueMinimo: 10,
-        },
-        {
-          id: 2,
-          nome: "Papel A4",
-          categoria: "Material Escolar",
-          unidade: "Pacote",
-          estoqueMinimo: 5,
-        },
-      ];
-      function carregarTabela() {
-        const tbody = document.getElementById("tabelaProdutos");
-        tbody.innerHTML = "";
-        produtos.forEach((p) => {
-          const row = tbody.insertRow();
-          row.innerHTML = `<td>${p.id}</td><td>${p.nome}</td><td>${p.categoria}</td><td>${p.unidade}</td><td>${p.estoqueMinimo}</td>
-                    <td><button class="btn btn-small btn-edit">Editar</button><button class="btn btn-small btn-delete">Excluir</button></td>`;
-        });
+      let produtoEditando = null;
+
+      // Carregar categorias
+      async function carregarCategorias() {
+        try {
+          const response = await fetch("/api/categorias");
+          const categorias = await response.json();
+          const select = document.getElementById("categoriaId");
+          select.innerHTML = '<option value="">Selecione...</option>';
+          categorias.forEach((c) => {
+            select.innerHTML += `<option value="${c.id}">${c.nome}</option>`;
+          });
+        } catch (error) {
+          console.error("Erro ao carregar categorias:", error);
+        }
       }
+
+      // Carregar medidas
+      async function carregarMedidas() {
+        try {
+          const response = await fetch("/api/medidas");
+          const medidas = await response.json();
+          const select = document.getElementById("medidaId");
+          select.innerHTML = '<option value="">Selecione...</option>';
+          medidas.forEach((m) => {
+            select.innerHTML += `<option value="${m.id}">${m.nome}</option>`;
+          });
+        } catch (error) {
+          console.error("Erro ao carregar medidas:", error);
+        }
+      }
+
+      // Carregar fornecedores
+      async function carregarFornecedores() {
+        try {
+          const response = await fetch("/api/fornecedores");
+          const fornecedores = await response.json();
+          const select = document.getElementById("fornecedorId");
+          select.innerHTML = '<option value="">Selecione...</option>';
+          fornecedores.forEach((f) => {
+            select.innerHTML += `<option value="${f.id}">${f.nome}</option>`;
+          });
+        } catch (error) {
+          console.error("Erro ao carregar fornecedores:", error);
+        }
+      }
+
+      // Carregar lista de produtos
+      async function carregarProdutos() {
+        try {
+          const response = await fetch("/api/produtos");
+          const produtos = await response.json();
+
+          const tbody = document.getElementById("tabelaProdutos");
+          tbody.innerHTML = "";
+
+          produtos.forEach((p) => {
+            const row = tbody.insertRow();
+            row.innerHTML = `
+                        <td>${p.id}</td>
+                        <td>${p.nome}</td>
+                        <td>${p.categoria?.nome || "-"}</td>
+                        <td>${p.unidadeMedida?.nome || "-"}</td>
+                        <td>${p.fornecedor?.nome || "-"}</td>
+                        <td>${p.estoqueMinimo}</td>
+                        <td><span style="color: ${p.ativo ? "#48bb78" : "#e53e3e"}">${p.ativo ? "Ativo" : "Inativo"}</span></td>
+                        <td>
+                            <button class="btn btn-small btn-edit" onclick="editarProduto(${p.id})">Editar</button>
+                            <button class="btn btn-small ${p.ativo ? "btn-delete" : "btn-edit"}" onclick="toggleStatus(${p.id}, ${!p.ativo})">${p.ativo ? "Desativar" : "Ativar"}</button>
+                        </td>
+                    `;
+          });
+        } catch (error) {
+          console.error("Erro ao carregar produtos:", error);
+        }
+      }
+
+      // Abrir modal para novo produto
       function abrirModal() {
-        alert("Funcionalidade de cadastro será implementada em breve!");
+        produtoEditando = null;
+        document.getElementById("modalTitulo").textContent = "Novo Produto";
+        document.getElementById("produtoForm").reset();
+        document.getElementById("produtoId").value = "";
+        document.getElementById("ativo").value = "true";
+        document.getElementById("modalProduto").classList.add("show");
       }
+
+      // Editar produto
+      async function editarProduto(id) {
+        try {
+          const response = await fetch(`/api/produtos/${id}`);
+          const produto = await response.json();
+
+          produtoEditando = produto;
+          document.getElementById("modalTitulo").textContent = "Editar Produto";
+          document.getElementById("produtoId").value = produto.id;
+          document.getElementById("nome").value = produto.nome;
+          document.getElementById("descricao").value = produto.descricao || "";
+          document.getElementById("categoriaId").value =
+            produto.categoria?.id || "";
+          document.getElementById("medidaId").value =
+            produto.unidadeMedida?.id || "";
+          document.getElementById("fornecedorId").value =
+            produto.fornecedor?.id || "";
+          document.getElementById("estoqueMinimo").value =
+            produto.estoqueMinimo;
+          document.getElementById("ativo").value = produto.ativo;
+
+          document.getElementById("modalProduto").classList.add("show");
+        } catch (error) {
+          mostrarAlerta("Erro ao carregar produto", "error");
+        }
+      }
+
+      // Ativar/Desativar produto
+      async function toggleStatus(id, ativar) {
+        const action = ativar ? "ativar" : "desativar";
+        try {
+          const response = await fetch(`/api/produtos/${id}/${action}`, {
+            method: "PATCH",
+          });
+          if (response.ok) {
+            mostrarAlerta(
+              `Produto ${ativar ? "ativado" : "desativado"} com sucesso!`,
+              "success",
+            );
+            carregarProdutos();
+          } else {
+            const erro = await response.text();
+            mostrarAlerta("Erro: " + erro, "error");
+          }
+        } catch (error) {
+          mostrarAlerta("Erro ao alterar status do produto", "error");
+        }
+      }
+
+      // Fechar modal
+      function fecharModal() {
+        document.getElementById("modalProduto").classList.remove("show");
+      }
+
+      // Salvar produto
+      document
+        .getElementById("produtoForm")
+        .addEventListener("submit", async (e) => {
+          e.preventDefault();
+
+          const produto = {
+            nome: document.getElementById("nome").value,
+            descricao: document.getElementById("descricao").value,
+            categoria: document.getElementById("categoriaId").value
+              ? { id: parseInt(document.getElementById("categoriaId").value) }
+              : null,
+            unidadeMedida: document.getElementById("medidaId").value
+              ? { id: parseInt(document.getElementById("medidaId").value) }
+              : null,
+            fornecedor: document.getElementById("fornecedorId").value
+              ? { id: parseInt(document.getElementById("fornecedorId").value) }
+              : null,
+            estoqueMinimo:
+              parseFloat(document.getElementById("estoqueMinimo").value) || 0,
+            ativo: document.getElementById("ativo").value === "true",
+          };
+
+          const produtoId = document.getElementById("produtoId").value;
+
+          try {
+            let response;
+            if (produtoId) {
+              response = await fetch(`/api/produtos/${produtoId}`, {
+                method: "PUT",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(produto),
+              });
+            } else {
+              response = await fetch("/api/produtos", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(produto),
+              });
+            }
+
+            if (response.ok) {
+              mostrarAlerta(
+                produtoId
+                  ? "Produto atualizado com sucesso!"
+                  : "Produto criado com sucesso!",
+                "success",
+              );
+              fecharModal();
+              carregarProdutos();
+            } else {
+              const erro = await response.text();
+              mostrarAlerta("Erro: " + erro, "error");
+            }
+          } catch (error) {
+            mostrarAlerta("Erro ao salvar produto", "error");
+          }
+        });
+
       function logout() {
         window.location.href = "/login";
       }
-      carregarTabela();
+
+      // Inicializar
+      carregarCategorias();
+      carregarMedidas();
+      carregarFornecedores();
+      carregarProdutos();
     </script>
   </body>
 </html>

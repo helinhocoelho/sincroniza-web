@@ -4,6 +4,11 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>SyncStock - Dashboard</title>
+    <link rel="icon" href="/favicon.ico" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
+    />
     <link rel="stylesheet" href="/css/style.css" />
   </head>
   <body>
@@ -19,15 +24,37 @@
           <p>Gestão de Estoque</p>
         </div>
         <ul class="sidebar-menu">
-          <li class="active"><a href="/dashboard">📊 Dashboard</a></li>
-          <li><a href="/usuarios">👥 Usuários</a></li>
-          <li><a href="/unidades">🏢 Unidades</a></li>
-          <li><a href="/setores">📁 Setores</a></li>
-          <li><a href="/produtos">📦 Produtos</a></li>
-          <li><a href="/fornecedores">🚚 Fornecedores</a></li>
-          <li><a href="/pedidos">📋 Pedidos</a></li>
-          <li><a href="/estoque">📊 Estoque</a></li>
-          <li><a href="/relatorios">📈 Relatórios</a></li>
+          <li>
+            <a href="/dashboard"><i class="fas fa-chart-line"></i> Dashboard</a>
+          </li>
+          <li>
+            <a href="/usuarios"><i class="fas fa-users"></i> Usuários</a>
+          </li>
+          <li>
+            <a href="/unidades"><i class="fas fa-building"></i> Unidades</a>
+          </li>
+          <li>
+            <a href="/setores"><i class="fas fa-folder"></i> Setores</a>
+          </li>
+          <li>
+            <a href="/produtos"><i class="fas fa-box"></i> Produtos</a>
+          </li>
+          <li>
+            <a href="/fornecedores"
+              ><i class="fas fa-truck"></i> Fornecedores</a
+            >
+          </li>
+          <li>
+            <a href="/pedidos"><i class="fas fa-clipboard-list"></i> Pedidos</a>
+          </li>
+          <li>
+            <a href="/estoque"><i class="fas fa-warehouse"></i> Estoque</a>
+          </li>
+          <li>
+            <a href="/relatorios"
+              ><i class="fas fa-chart-bar"></i> Relatórios</a
+            >
+          </li>
         </ul>
       </aside>
 
@@ -36,7 +63,7 @@
         <div class="top-bar">
           <h3>Dashboard</h3>
           <div class="user-info">
-            <span>👤 Administrador</span>
+            <span id="nomeUsuario">👤 Carregando...</span>
             <button class="logout-btn" onclick="logout()">Sair</button>
           </div>
         </div>
@@ -68,13 +95,16 @@
                 <th>ID</th>
                 <th>Unidade</th>
                 <th>Setor</th>
+                <th>Solicitante</th>
                 <th>Data</th>
                 <th>Status</th>
               </tr>
             </thead>
             <tbody id="tabelaPedidos">
               <tr>
-                <td colspan="5" style="text-align: center">Carregando...</td>
+                <td colspan="6" style="text-align: center">
+                  Carregando...<\/td>
+                </td>
               </tr>
             </tbody>
           </table>
@@ -84,61 +114,112 @@
 
     <script src="/js/main.js"></script>
     <script>
-      const dadosSimulados = {
-        totalProdutos: 156,
-        pedidosPendentes: 8,
-        estoqueBaixo: 5,
-        totalUnidades: 3,
-        ultimosPedidos: [
-          {
-            id: 1,
-            unidade: "Guarani",
-            setor: "Limpeza",
-            data: "13/04/2026",
-            status: "Pendente",
-          },
-          {
-            id: 2,
-            unidade: "Jaraguá",
-            setor: "Manutenção",
-            data: "12/04/2026",
-            status: "Aprovado",
-          },
-          {
-            id: 3,
-            unidade: "Centro",
-            setor: "Secretaria",
-            data: "11/04/2026",
-            status: "Enviado",
-          },
-        ],
-      };
+      // Carregar dados do Dashboard
+      async function carregarDashboard() {
+        try {
+          // Buscar dados em paralelo
+          const [produtosRes, unidadesRes, pedidosRes, estoqueRes] =
+            await Promise.all([
+              fetch("/api/produtos"),
+              fetch("/api/unidades"),
+              fetch("/api/pedidos"),
+              fetch("/api/estoque/alertas/estoque-baixo"),
+            ]);
 
-      document.getElementById("totalProdutos").textContent =
-        dadosSimulados.totalProdutos;
-      document.getElementById("pedidosPendentes").textContent =
-        dadosSimulados.pedidosPendentes;
-      document.getElementById("estoqueBaixo").textContent =
-        dadosSimulados.estoqueBaixo;
-      document.getElementById("totalUnidades").textContent =
-        dadosSimulados.totalUnidades;
+          const produtos = await produtosRes.json();
+          const unidades = await unidadesRes.json();
+          const pedidos = await pedidosRes.json();
+          const alertasEstoque = await estoqueRes.json();
 
-      const tabelaBody = document.getElementById("tabelaPedidos");
-      tabelaBody.innerHTML = "";
-      dadosSimulados.ultimosPedidos.forEach((pedido) => {
-        const row = tabelaBody.insertRow();
-        row.innerHTML = `
-                <td>${pedido.id}</td>
-                <td>${pedido.unidade}</td>
-                <td>${pedido.setor}</td>
-                <td>${pedido.data}</td>
-                <td><span style="color: ${pedido.status === "Pendente" ? "#e53e3e" : "#48bb78"}">${pedido.status}</span></td>
-            `;
-      });
+          // Total de produtos
+          document.getElementById("totalProdutos").textContent =
+            produtos.length;
+
+          // Total de unidades
+          document.getElementById("totalUnidades").textContent =
+            unidades.length;
+
+          // Pedidos pendentes
+          const pedidosPendentes = pedidos.filter(
+            (p) => p.status === "PENDENTE",
+          ).length;
+          document.getElementById("pedidosPendentes").textContent =
+            pedidosPendentes;
+
+          // Estoque baixo
+          document.getElementById("estoqueBaixo").textContent =
+            alertasEstoque.length;
+
+          // Carregar últimos 5 pedidos
+          const ultimosPedidos = pedidos
+            .sort((a, b) => new Date(b.dataCriacao) - new Date(a.dataCriacao))
+            .slice(0, 5);
+
+          const tabelaBody = document.getElementById("tabelaPedidos");
+          tabelaBody.innerHTML = "";
+
+          if (ultimosPedidos.length === 0) {
+            tabelaBody.innerHTML =
+              '<tr><td colspan="6" style="text-align: center;">Nenhum pedido encontrado<\/td></tr>';
+            return;
+          }
+
+          ultimosPedidos.forEach((pedido) => {
+            const row = tabelaBody.insertRow();
+            const data = new Date(pedido.dataCriacao).toLocaleDateString(
+              "pt-BR",
+            );
+
+            let statusColor = "#666";
+            if (pedido.status === "PENDENTE") statusColor = "#ed8936";
+            else if (pedido.status === "APROVADO") statusColor = "#48bb78";
+            else if (pedido.status === "ENVIADO") statusColor = "#4299e1";
+            else if (pedido.status === "RECEBIDO") statusColor = "#38a169";
+            else if (pedido.status === "CANCELADO") statusColor = "#e53e3e";
+
+            row.innerHTML = `
+                        <td>${pedido.id}</td>
+                        <td>${pedido.unidadeSolicitante?.nome || "-"}</td>
+                        <td>${pedido.setorSolicitante?.nome || "-"}</td>
+                        <td>${pedido.usuarioSolicitante?.nome || "-"}</td>
+                        <td>${data}</td>
+                        <td><span style="color: ${statusColor}; font-weight: bold;">${pedido.status}</span></td>
+                    `;
+          });
+        } catch (error) {
+          console.error("Erro ao carregar dashboard:", error);
+          mostrarAlerta("Erro ao carregar dados do dashboard", "error");
+        }
+      }
+
+      // Carregar nome do usuário logado (simulado - depois integrar com autenticação)
+      async function carregarUsuarioLogado() {
+        try {
+          // Por enquanto, busca o usuário admin (ID 1)
+          const response = await fetch("/api/usuarios/1");
+          if (response.ok) {
+            const usuario = await response.json();
+            document.getElementById("nomeUsuario").innerHTML =
+              `👤 ${usuario.nome}`;
+          } else {
+            document.getElementById("nomeUsuario").innerHTML =
+              "👤 Administrador";
+          }
+        } catch (error) {
+          document.getElementById("nomeUsuario").innerHTML = "👤 Administrador";
+        }
+      }
 
       function logout() {
         window.location.href = "/login";
       }
+
+      // Inicializar
+      carregarUsuarioLogado();
+      carregarDashboard();
+
+      // Atualizar a cada 30 segundos
+      setInterval(carregarDashboard, 30000);
     </script>
   </body>
 </html>

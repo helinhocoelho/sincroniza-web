@@ -96,3 +96,56 @@ function aplicarMascaraCNPJ(input) {
     input.value = valor;
   }
 }
+
+// ===== MODAL DE ALERTA GLOBAL =====
+function mostrarAlerta(mensagem, tipo = "info") {
+  // Remove modal existente se houver
+  const modalExistente = document.querySelector(".modal-alert");
+  if (modalExistente) {
+    modalExistente.remove();
+  }
+
+  const icons = {
+    success: "✅",
+    error: "❌",
+    warning: "⚠️",
+    info: "ℹ️",
+  };
+
+  const modal = document.createElement("div");
+  modal.className = "modal-alert";
+  modal.innerHTML = `
+        <div class="modal-alert-content">
+            <div class="modal-alert-header ${tipo}">
+                ${icons[tipo] || "ℹ️"}
+            </div>
+            <div class="modal-alert-body">
+                ${mensagem}
+            </div>
+            <div class="modal-alert-footer">
+                <button onclick="fecharAlerta()">OK</button>
+            </div>
+        </div>
+    `;
+
+  document.body.appendChild(modal);
+
+  // Fechar ao clicar fora
+  modal.addEventListener("click", (e) => {
+    if (e.target === modal) {
+      fecharAlerta();
+    }
+  });
+}
+
+function fecharAlerta() {
+  const modal = document.querySelector(".modal-alert");
+  if (modal) {
+    modal.remove();
+  }
+}
+
+// Substituir os alerts do sistema
+window.alert = function (mensagem) {
+  mostrarAlerta(mensagem, "info");
+};

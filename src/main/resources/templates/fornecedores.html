@@ -4,6 +4,11 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>SyncStock - Fornecedores</title>
+    <link rel="icon" href="/favicon.ico" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
+    />
     <link rel="stylesheet" href="/css/style.css" />
   </head>
   <body>
@@ -18,23 +23,45 @@
           <p>Gestão de Estoque</p>
         </div>
         <ul class="sidebar-menu">
-          <li><a href="/dashboard">📊 Dashboard</a></li>
-          <li><a href="/usuarios">👥 Usuários</a></li>
-          <li><a href="/unidades">🏢 Unidades</a></li>
-          <li><a href="/setores">📁 Setores</a></li>
-          <li><a href="/produtos">📦 Produtos</a></li>
-          <li class="active"><a href="/fornecedores">🚚 Fornecedores</a></li>
-          <li><a href="/pedidos">📋 Pedidos</a></li>
-          <li><a href="/estoque">📊 Estoque</a></li>
-          <li><a href="/relatorios">📈 Relatórios</a></li>
+          <li>
+            <a href="/dashboard"><i class="fas fa-chart-line"></i> Dashboard</a>
+          </li>
+          <li>
+            <a href="/usuarios"><i class="fas fa-users"></i> Usuários</a>
+          </li>
+          <li>
+            <a href="/unidades"><i class="fas fa-building"></i> Unidades</a>
+          </li>
+          <li>
+            <a href="/setores"><i class="fas fa-folder"></i> Setores</a>
+          </li>
+          <li>
+            <a href="/produtos"><i class="fas fa-box"></i> Produtos</a>
+          </li>
+          <li>
+            <a href="/fornecedores"
+              ><i class="fas fa-truck"></i> Fornecedores</a
+            >
+          </li>
+          <li>
+            <a href="/pedidos"><i class="fas fa-clipboard-list"></i> Pedidos</a>
+          </li>
+          <li>
+            <a href="/estoque"><i class="fas fa-warehouse"></i> Estoque</a>
+          </li>
+          <li>
+            <a href="/relatorios"
+              ><i class="fas fa-chart-bar"></i> Relatórios</a
+            >
+          </li>
         </ul>
       </aside>
       <main class="main-content">
         <div class="top-bar">
           <h3>Fornecedores</h3>
           <div class="user-info">
-            <span>👤 Administrador</span
-            ><button class="logout-btn" onclick="logout()">Sair</button>
+            <span>👤 Administrador</span>
+            <button class="logout-btn" onclick="logout()">Sair</button>
           </div>
         </div>
         <div class="content-area">
@@ -58,40 +85,153 @@
             </thead>
             <tbody id="tabelaFornecedores">
               <tr>
-                <td colspan="6" style="text-align: center">Carregando...</td>
+                <td colspan="6">Carregando...</td>
               </tr>
             </tbody>
           </table>
         </div>
       </main>
     </div>
+
+    <!-- Modal -->
+    <div id="modalFornecedor" class="modal">
+      <div class="modal-content">
+        <span class="close" onclick="fecharModal()">&times;</span>
+        <h3 id="modalTitulo">Novo Fornecedor</h3>
+        <form id="fornecedorForm">
+          <input type="hidden" id="fornecedorId" />
+          <div class="form-group">
+            <label for="nome">Nome</label
+            ><input type="text" id="nome" required />
+          </div>
+          <div class="form-group">
+            <label for="cnpj">CNPJ</label><input type="text" id="cnpj" />
+          </div>
+          <div class="form-group">
+            <label for="email">Email</label><input type="email" id="email" />
+          </div>
+          <div class="form-group">
+            <label for="telefone">Telefone</label
+            ><input type="text" id="telefone" />
+          </div>
+          <div class="form-group">
+            <label for="endereco">Endereço</label
+            ><input type="text" id="endereco" />
+          </div>
+          <button type="submit" class="btn">Salvar</button>
+        </form>
+      </div>
+    </div>
+
     <script src="/js/main.js"></script>
     <script>
-      const fornecedores = [
-        {
-          id: 1,
-          nome: "Distribuidora ABC",
-          cnpj: "12.345.678/0001-90",
-          email: "contato@abc.com",
-          telefone: "(11) 5555-1234",
-        },
-      ];
-      function carregarTabela() {
-        const tbody = document.getElementById("tabelaFornecedores");
-        tbody.innerHTML = "";
-        fornecedores.forEach((f) => {
-          const row = tbody.insertRow();
-          row.innerHTML = `<td>${f.id}</td><td>${f.nome}</td><td>${f.cnpj}</td><td>${f.email}</td><td>${f.telefone}</td>
-                    <td><button class="btn btn-small btn-edit">Editar</button><button class="btn btn-small btn-delete">Excluir</button></td>`;
-        });
+      async function carregarFornecedores() {
+        try {
+          const response = await fetch("/api/fornecedores");
+          const fornecedores = await response.json();
+          const tbody = document.getElementById("tabelaFornecedores");
+          tbody.innerHTML = "";
+          fornecedores.forEach((f) => {
+            const row = tbody.insertRow();
+            row.innerHTML = `
+                        <td>${f.id}</td><td>${f.nome}</td><td>${f.cnpj || "-"}</td><td>${f.email || "-"}</td><td>${f.telefone || "-"}</td>
+                        <td><button class="btn btn-small btn-edit" onclick="editarFornecedor(${f.id})">Editar</button>
+                        <button class="btn btn-small btn-delete" onclick="deletarFornecedor(${f.id})">Excluir</button></td>
+                    `;
+          });
+        } catch (error) {
+          mostrarAlerta("Erro ao carregar fornecedores", "error");
+        }
       }
+
       function abrirModal() {
-        alert("Funcionalidade de cadastro será implementada em breve!");
+        document.getElementById("modalTitulo").textContent = "Novo Fornecedor";
+        document.getElementById("fornecedorForm").reset();
+        document.getElementById("fornecedorId").value = "";
+        document.getElementById("modalFornecedor").classList.add("show");
       }
+
+      async function editarFornecedor(id) {
+        try {
+          const response = await fetch(`/api/fornecedores/${id}`);
+          const f = await response.json();
+          document.getElementById("modalTitulo").textContent =
+            "Editar Fornecedor";
+          document.getElementById("fornecedorId").value = f.id;
+          document.getElementById("nome").value = f.nome;
+          document.getElementById("cnpj").value = f.cnpj || "";
+          document.getElementById("email").value = f.email || "";
+          document.getElementById("telefone").value = f.telefone || "";
+          document.getElementById("endereco").value = f.endereco || "";
+          document.getElementById("modalFornecedor").classList.add("show");
+        } catch (error) {
+          mostrarAlerta("Erro ao carregar fornecedor", "error");
+        }
+      }
+
+      async function deletarFornecedor(id) {
+        if (confirm("Tem certeza que deseja excluir este fornecedor?")) {
+          try {
+            await fetch(`/api/fornecedores/${id}`, { method: "DELETE" });
+            mostrarAlerta("Fornecedor excluído!", "success");
+            carregarFornecedores();
+          } catch (error) {
+            mostrarAlerta("Erro ao excluir fornecedor", "error");
+          }
+        }
+      }
+
+      function fecharModal() {
+        document.getElementById("modalFornecedor").classList.remove("show");
+      }
+
+      document
+        .getElementById("fornecedorForm")
+        .addEventListener("submit", async (e) => {
+          e.preventDefault();
+          const fornecedor = {
+            nome: document.getElementById("nome").value,
+            cnpj: document.getElementById("cnpj").value,
+            email: document.getElementById("email").value,
+            telefone: document.getElementById("telefone").value,
+            endereco: document.getElementById("endereco").value,
+          };
+          const id = document.getElementById("fornecedorId").value;
+          try {
+            let response;
+            if (id) {
+              response = await fetch(`/api/fornecedores/${id}`, {
+                method: "PUT",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(fornecedor),
+              });
+            } else {
+              response = await fetch("/api/fornecedores", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(fornecedor),
+              });
+            }
+            if (response.ok) {
+              mostrarAlerta(
+                id ? "Fornecedor atualizado!" : "Fornecedor criado!",
+                "success",
+              );
+              fecharModal();
+              carregarFornecedores();
+            } else {
+              const erro = await response.text();
+              mostrarAlerta("Erro: " + erro, "error");
+            }
+          } catch (error) {
+            mostrarAlerta("Erro ao salvar fornecedor", "error");
+          }
+        });
+
       function logout() {
         window.location.href = "/login";
       }
-      carregarTabela();
+      carregarFornecedores();
     </script>
   </body>
 </html>

@@ -4,6 +4,11 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>SyncStock - Pedidos</title>
+    <link rel="icon" href="/favicon.ico" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
+    />
     <link rel="stylesheet" href="/css/style.css" />
   </head>
   <body>
@@ -18,39 +23,78 @@
           <p>Gestão de Estoque</p>
         </div>
         <ul class="sidebar-menu">
-          <li><a href="/dashboard">📊 Dashboard</a></li>
-          <li><a href="/usuarios">👥 Usuários</a></li>
-          <li><a href="/unidades">🏢 Unidades</a></li>
-          <li><a href="/setores">📁 Setores</a></li>
-          <li><a href="/produtos">📦 Produtos</a></li>
-          <li><a href="/fornecedores">🚚 Fornecedores</a></li>
-          <li class="active"><a href="/pedidos">📋 Pedidos</a></li>
-          <li><a href="/estoque">📊 Estoque</a></li>
-          <li><a href="/relatorios">📈 Relatórios</a></li>
+          <li>
+            <a href="/dashboard"><i class="fas fa-chart-line"></i> Dashboard</a>
+          </li>
+          <li>
+            <a href="/usuarios"><i class="fas fa-users"></i> Usuários</a>
+          </li>
+          <li>
+            <a href="/unidades"><i class="fas fa-building"></i> Unidades</a>
+          </li>
+          <li>
+            <a href="/setores"><i class="fas fa-folder"></i> Setores</a>
+          </li>
+          <li>
+            <a href="/produtos"><i class="fas fa-box"></i> Produtos</a>
+          </li>
+          <li>
+            <a href="/fornecedores"
+              ><i class="fas fa-truck"></i> Fornecedores</a
+            >
+          </li>
+          <li>
+            <a href="/pedidos"><i class="fas fa-clipboard-list"></i> Pedidos</a>
+          </li>
+          <li>
+            <a href="/estoque"><i class="fas fa-warehouse"></i> Estoque</a>
+          </li>
+          <li>
+            <a href="/relatorios"
+              ><i class="fas fa-chart-bar"></i> Relatórios</a
+            >
+          </li>
         </ul>
       </aside>
       <main class="main-content">
         <div class="top-bar">
           <h3>Pedidos</h3>
           <div class="user-info">
-            <span>👤 Administrador</span
-            ><button class="logout-btn" onclick="logout()">Sair</button>
+            <span>👤 Administrador</span>
+            <button class="logout-btn" onclick="logout()">Sair</button>
           </div>
         </div>
         <div class="content-area">
           <button
             class="btn btn-primary"
             style="width: auto; margin-bottom: 20px"
-            onclick="abrirModal()"
+            onclick="abrirModalCriar()"
           >
             + Novo Pedido
           </button>
+
+          <!-- Filtros -->
+          <div class="form-row" style="margin-bottom: 20px">
+            <select id="filtroStatus" onchange="carregarPedidos()">
+              <option value="">Todos os Status</option>
+              <option value="PENDENTE">Pendente</option>
+              <option value="APROVADO">Aprovado</option>
+              <option value="ENVIADO">Enviado</option>
+              <option value="RECEBIDO">Recebido</option>
+              <option value="CANCELADO">Cancelado</option>
+            </select>
+            <select id="filtroUnidade" onchange="carregarPedidos()">
+              <option value="">Todas Unidades</option>
+            </select>
+          </div>
+
           <table class="data-table">
             <thead>
               <tr>
                 <th>ID</th>
                 <th>Unidade</th>
                 <th>Setor</th>
+                <th>Solicitante</th>
                 <th>Data</th>
                 <th>Status</th>
                 <th>Ações</th>
@@ -58,47 +102,342 @@
             </thead>
             <tbody id="tabelaPedidos">
               <tr>
-                <td colspan="6" style="text-align: center">Carregando...</td>
+                <td colspan="7" style="text-align: center">
+                  Carregando...<\/td>
+                </td>
               </tr>
             </tbody>
           </table>
         </div>
       </main>
     </div>
+
+    <!-- Modal Criar Pedido -->
+    <div id="modalPedido" class="modal">
+      <div class="modal-content" style="width: 700px">
+        <span class="close" onclick="fecharModal()">&times;</span>
+        <h3 id="modalTitulo">Novo Pedido</h3>
+        <form id="pedidoForm">
+          <div class="form-row">
+            <div class="form-group">
+              <label for="unidadeSolicitanteId">Unidade</label>
+              <select id="unidadeSolicitanteId" required></select>
+            </div>
+            <div class="form-group">
+              <label for="setorSolicitanteId">Setor</label>
+              <select id="setorSolicitanteId" required></select>
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="usuarioSolicitanteId">Solicitante</label>
+            <select id="usuarioSolicitanteId" required></select>
+          </div>
+
+          <h4>Itens do Pedido</h4>
+          <div id="itensContainer">
+            <div
+              class="item-pedido"
+              style="display: flex; gap: 10px; margin-bottom: 10px"
+            >
+              <select class="produtoId" style="flex: 2" required>
+                <option value="">Selecione Produto</option>
+              </select>
+              <input
+                type="number"
+                class="quantidade"
+                placeholder="Quantidade"
+                style="flex: 1"
+                required
+              />
+              <button
+                type="button"
+                class="btn-remove-item"
+                style="
+                  background: #dc3545;
+                  color: white;
+                  padding: 5px 10px;
+                  border: none;
+                  border-radius: 5px;
+                  cursor: pointer;
+                "
+                onclick="removerItem(this)"
+              >
+                Remover
+              </button>
+            </div>
+          </div>
+          <button
+            type="button"
+            class="btn btn-secondary"
+            onclick="adicionarItem()"
+            style="width: auto; margin-bottom: 10px"
+          >
+            + Adicionar Item
+          </button>
+
+          <button type="submit" class="btn">Salvar Pedido</button>
+        </form>
+      </div>
+    </div>
+
     <script src="/js/main.js"></script>
     <script>
-      const pedidos = [
-        {
-          id: 1,
-          unidade: "Guarani",
-          setor: "Limpeza",
-          data: "13/04/2026",
-          status: "Pendente",
-        },
-        {
-          id: 2,
-          unidade: "Jaraguá",
-          setor: "Manutenção",
-          data: "12/04/2026",
-          status: "Aprovado",
-        },
-      ];
-      function carregarTabela() {
-        const tbody = document.getElementById("tabelaPedidos");
-        tbody.innerHTML = "";
-        pedidos.forEach((p) => {
-          const row = tbody.insertRow();
-          row.innerHTML = `<td>${p.id}</td><td>${p.unidade}</td><td>${p.setor}</td><td>${p.data}</td><td>${p.status}</td>
-                    <td><button class="btn btn-small btn-edit">Aprovar</button><button class="btn btn-small btn-delete">Cancelar</button></td>`;
+      let produtosMap = {};
+
+      // Carregar dados para os selects
+      async function carregarDadosSelects() {
+        try {
+          const [unidadesRes, setoresRes, usuariosRes, produtosRes] =
+            await Promise.all([
+              fetch("/api/unidades"),
+              fetch("/api/setores"),
+              fetch("/api/usuarios"),
+              fetch("/api/produtos"),
+            ]);
+
+          const unidades = await unidadesRes.json();
+          const setores = await setoresRes.json();
+          const usuarios = await usuariosRes.json();
+          const produtos = await produtosRes.json();
+
+          produtos.forEach((p) => (produtosMap[p.id] = p.nome));
+
+          // Preencher selects
+          const unidadeSelect = document.getElementById("unidadeSolicitanteId");
+          unidadeSelect.innerHTML = '<option value="">Selecione...</option>';
+          unidades.forEach((u) => {
+            unidadeSelect.innerHTML += `<option value="${u.id}">${u.nome}</option>`;
+          });
+
+          const setorSelect = document.getElementById("setorSolicitanteId");
+          setorSelect.innerHTML = '<option value="">Selecione...</option>';
+          setores.forEach((s) => {
+            const unidadeNome =
+              unidades.find((u) => u.id === s.unidade?.id)?.nome || "-";
+            setorSelect.innerHTML += `<option value="${s.id}">${s.nome} (${unidadeNome})</option>`;
+          });
+
+          const usuarioSelect = document.getElementById("usuarioSolicitanteId");
+          usuarioSelect.innerHTML = '<option value="">Selecione...</option>';
+          usuarios.forEach((u) => {
+            usuarioSelect.innerHTML += `<option value="${u.id}">${u.nome} (${u.permissao?.nome || u.permissao})</option>`;
+          });
+
+          // Preencher selects de produtos nos itens
+          const produtoSelects = document.querySelectorAll(".produtoId");
+          produtoSelects.forEach((select) => {
+            select.innerHTML = '<option value="">Selecione Produto</option>';
+            produtos.forEach((p) => {
+              select.innerHTML += `<option value="${p.id}">${p.nome}</option>`;
+            });
+          });
+
+          // Filtro unidade
+          const filtroUnidade = document.getElementById("filtroUnidade");
+          filtroUnidade.innerHTML = '<option value="">Todas Unidades</option>';
+          unidades.forEach((u) => {
+            filtroUnidade.innerHTML += `<option value="${u.id}">${u.nome}</option>`;
+          });
+        } catch (error) {
+          console.error("Erro ao carregar dados:", error);
+          mostrarAlerta("Erro ao carregar dados do formulário", "error");
+        }
+      }
+
+      // Adicionar novo item
+      function adicionarItem() {
+        const container = document.getElementById("itensContainer");
+        const novoItem = document.createElement("div");
+        novoItem.className = "item-pedido";
+        novoItem.style.display = "flex";
+        novoItem.style.gap = "10px";
+        novoItem.style.marginBottom = "10px";
+        novoItem.innerHTML = `
+                <select class="produtoId" style="flex: 2;" required>
+                    <option value="">Selecione Produto</option>
+                    ${Object.keys(produtosMap)
+                      .map(
+                        (id) =>
+                          `<option value="${id}">${produtosMap[id]}</option>`,
+                      )
+                      .join("")}
+                </select>
+                <input type="number" class="quantidade" placeholder="Quantidade" style="flex: 1;" required>
+                <button type="button" class="btn-remove-item" style="background: #dc3545; color: white; padding: 5px 10px; border: none; border-radius: 5px; cursor: pointer;" onclick="removerItem(this)">Remover</button>
+            `;
+        container.appendChild(novoItem);
+      }
+
+      function removerItem(btn) {
+        btn.parentElement.remove();
+      }
+
+      // Carregar pedidos
+      async function carregarPedidos() {
+        try {
+          const status = document.getElementById("filtroStatus").value;
+          const unidadeId = document.getElementById("filtroUnidade").value;
+
+          let url = "/api/pedidos";
+          if (status) {
+            url = `/api/pedidos/status/${status}`;
+          } else if (unidadeId) {
+            url = `/api/pedidos/unidade/${unidadeId}`;
+          }
+
+          const response = await fetch(url);
+          const pedidos = await response.json();
+
+          const tbody = document.getElementById("tabelaPedidos");
+          tbody.innerHTML = "";
+
+          if (pedidos.length === 0) {
+            tbody.innerHTML =
+              '<tr><td colspan="7" style="text-align: center;">Nenhum pedido encontrado</td></tr>';
+            return;
+          }
+
+          for (const p of pedidos) {
+            const row = tbody.insertRow();
+            const data = new Date(p.dataCriacao).toLocaleDateString("pt-BR");
+
+            let botoes = "";
+            if (p.status === "PENDENTE") {
+              botoes = `<button class="btn btn-small btn-edit" onclick="alterarStatus(${p.id}, 'aprovar')">Aprovar</button>
+                                  <button class="btn btn-small btn-delete" onclick="alterarStatus(${p.id}, 'cancelar')">Cancelar</button>`;
+            } else if (p.status === "APROVADO") {
+              botoes = `<button class="btn btn-small btn-edit" onclick="alterarStatus(${p.id}, 'enviar')">Enviar</button>
+                                  <button class="btn btn-small btn-delete" onclick="alterarStatus(${p.id}, 'cancelar')">Cancelar</button>`;
+            } else if (p.status === "ENVIADO") {
+              botoes = `<button class="btn btn-small btn-edit" onclick="alterarStatus(${p.id}, 'receber')">Receber</button>`;
+            } else {
+              botoes = `<span style="color: #666;">-</span>`;
+            }
+
+            let statusColor = "#666";
+            if (p.status === "PENDENTE") statusColor = "#ed8936";
+            else if (p.status === "APROVADO") statusColor = "#48bb78";
+            else if (p.status === "ENVIADO") statusColor = "#4299e1";
+            else if (p.status === "RECEBIDO") statusColor = "#38a169";
+            else if (p.status === "CANCELADO") statusColor = "#e53e3e";
+
+            row.innerHTML = `
+                        <td>${p.id}</td>
+                        <td>${p.unidadeSolicitante?.nome || "-"}</td>
+                        <td>${p.setorSolicitante?.nome || "-"}</td>
+                        <td>${p.usuarioSolicitante?.nome || "-"}</td>
+                        <td>${data}</td>
+                        <td><span style="color: ${statusColor}; font-weight: bold;">${p.status}</span></td>
+                        <td>${botoes}</td>
+                    `;
+          }
+        } catch (error) {
+          console.error("Erro:", error);
+          mostrarAlerta("Erro ao carregar pedidos", "error");
+        }
+      }
+
+      // Alterar status do pedido
+      async function alterarStatus(id, acao) {
+        try {
+          const response = await fetch(`/api/pedidos/${id}/${acao}`, {
+            method: "PATCH",
+          });
+          if (response.ok) {
+            mostrarAlerta(`Pedido ${acao}do com sucesso!`, "success");
+            carregarPedidos();
+          } else {
+            const erro = await response.text();
+            mostrarAlerta("Erro: " + erro, "error");
+          }
+        } catch (error) {
+          mostrarAlerta("Erro ao alterar status", "error");
+        }
+      }
+
+      // Abrir modal criar pedido
+      function abrirModalCriar() {
+        document.getElementById("modalTitulo").textContent = "Novo Pedido";
+        document.getElementById("pedidoForm").reset();
+        document.getElementById("modalPedido").classList.add("show");
+      }
+
+      function fecharModal() {
+        document.getElementById("modalPedido").classList.remove("show");
+      }
+
+      // Salvar pedido
+      document
+        .getElementById("pedidoForm")
+        .addEventListener("submit", async (e) => {
+          e.preventDefault();
+
+          const itens = [];
+          const itemDivs = document.querySelectorAll(".item-pedido");
+
+          for (const div of itemDivs) {
+            const produtoId = div.querySelector(".produtoId").value;
+            const quantidade = div.querySelector(".quantidade").value;
+            if (produtoId && quantidade) {
+              itens.push({
+                produto: { id: parseInt(produtoId) },
+                quantidadeSolicitada: parseFloat(quantidade),
+              });
+            }
+          }
+
+          if (itens.length === 0) {
+            mostrarAlerta("Adicione pelo menos um item ao pedido", "warning");
+            return;
+          }
+
+          const unidadeId = document.getElementById(
+            "unidadeSolicitanteId",
+          ).value;
+          const setorId = document.getElementById("setorSolicitanteId").value;
+          const usuarioId = document.getElementById(
+            "usuarioSolicitanteId",
+          ).value;
+
+          if (!unidadeId || !setorId || !usuarioId) {
+            mostrarAlerta("Preencha unidade, setor e solicitante", "warning");
+            return;
+          }
+
+          const pedido = {
+            unidadeSolicitante: { id: parseInt(unidadeId) },
+            setorSolicitante: { id: parseInt(setorId) },
+            usuarioSolicitante: { id: parseInt(usuarioId) },
+            itens: itens,
+          };
+
+          try {
+            const response = await fetch("/api/pedidos", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify(pedido),
+            });
+
+            if (response.ok) {
+              mostrarAlerta("Pedido criado com sucesso!", "success");
+              fecharModal();
+              carregarPedidos();
+            } else {
+              const erro = await response.text();
+              mostrarAlerta("Erro: " + erro, "error");
+            }
+          } catch (error) {
+            mostrarAlerta("Erro ao criar pedido", "error");
+          }
         });
-      }
-      function abrirModal() {
-        alert("Funcionalidade de cadastro será implementada em breve!");
-      }
+
       function logout() {
         window.location.href = "/login";
       }
-      carregarTabela();
+
+      // Inicializar
+      carregarDadosSelects();
+      carregarPedidos();
     </script>
   </body>
 </html>

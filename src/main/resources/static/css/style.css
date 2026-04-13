@@ -369,3 +369,145 @@ a:hover {
 .btn-primary:hover {
   background: #ff64ff;
 }
+
+/* ===== MODAL DE ALERTA ===== */
+.modal-alert {
+  position: fixed;
+  z-index: 2000;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.modal-alert-content {
+  background: white;
+  border-radius: 10px;
+  width: 400px;
+  max-width: 90%;
+  text-align: center;
+  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
+  animation: modalFadeIn 0.3s ease;
+}
+
+@keyframes modalFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-50px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.modal-alert-header {
+  padding: 20px;
+  border-radius: 10px 10px 0 0;
+  font-size: 48px;
+}
+
+.modal-alert-header.success {
+  background: #ff64ff;
+  color: white;
+}
+
+.modal-alert-header.error {
+  background: #e53e3e;
+  color: white;
+}
+
+.modal-alert-header.warning {
+  background: #ed8936;
+  color: white;
+}
+
+.modal-alert-header.info {
+  background: #321e50;
+  color: white;
+}
+
+.modal-alert-body {
+  padding: 20px;
+  font-size: 16px;
+  color: #333;
+}
+
+.modal-alert-footer {
+  padding: 15px 20px 20px;
+}
+
+.modal-alert-footer button {
+  background: #321e50;
+  color: white;
+  border: none;
+  padding: 10px 30px;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 14px;
+  transition: background 0.3s;
+}
+
+.modal-alert-footer button:hover {
+  background: #ff64ff;
+}
+
+/* Modal padrão (CRUD) */
+.modal {
+  position: fixed;
+  z-index: 1000;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: none;
+  justify-content: center;
+  align-items: center;
+}
+
+.modal.show {
+  display: flex;
+}
+
+.modal-content {
+  background-color: white;
+  padding: 25px;
+  width: 500px;
+  max-width: 90%;
+  max-height: 90vh;
+  overflow-y: auto;
+  border-radius: 10px;
+  position: relative;
+  margin: 0;
+}
+
+.close {
+  position: absolute;
+  right: 20px;
+  top: 15px;
+  font-size: 28px;
+  font-weight: bold;
+  cursor: pointer;
+  color: #666;
+  transition: color 0.3s;
+}
+
+.close:hover {
+  color: #e53e3e;
+}
+
+@keyframes modalFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-50px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}

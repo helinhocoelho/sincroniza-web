@@ -1,0 +1,14 @@
+package com.sincroniza.syncstock.repository;
+
+import com.sincroniza.syncstock.model.Pedido;
+import com.sincroniza.syncstock.model.StatusPedido;
+import com.sincroniza.syncstock.model.Unidade;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
+import java.util.List;
+
+@Repository
+public interface PedidoRepository extends JpaRepository<Pedido, Long> {
+    List<Pedido> findByStatus(StatusPedido status);
+    List<Pedido> findByUnidadeSolicitante(Unidade unidade);
+}
